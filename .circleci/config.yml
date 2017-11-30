@@ -19,19 +19,11 @@ jobs:
             - ~/.m2
           key: cache-{{ checksum "build.gradle" }}
 
-      - run: gradle build
-
-      - persist_to_workspace:
-         root: .
-         paths:
-           - build/libs
-           - build.gradle
+      - run: gradle test
 
   deploy:
     <<: *defaults
     steps:
-      - attach_workspace:
-          at: .
       - run: gradle publish
 
 workflows:
