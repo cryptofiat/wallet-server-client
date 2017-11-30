@@ -1,5 +1,5 @@
 defaults: &defaults
-  working_directory: /tmp
+  working_directory: ~/build
   docker:
     - image: circleci/java:8-jdk
 
