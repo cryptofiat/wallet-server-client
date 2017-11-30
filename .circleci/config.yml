@@ -22,16 +22,16 @@ jobs:
       - run: gradle build
 
       - persist_to_workspace:
-         root: build
+         root: .
          paths:
-           - libs
+           - build/libs
            - build.gradle
 
   deploy:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: build
+          at: .
       - run: gradle publish
 
 workflows:
