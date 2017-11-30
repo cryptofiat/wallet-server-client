@@ -1,4 +1,7 @@
 # wallet-server-client
+
+[![CircleCI](https://circleci.com/gh/cryptofiat/wallet-server-client.svg?style=svg)](https://circleci.com/gh/cryptofiat/wallet-server-client)
+
 Client library for wallet-server to encapsulate signing and sending of requests.
 This is recommended to use for all wallet-server calls that interact with Ethereum.
 
