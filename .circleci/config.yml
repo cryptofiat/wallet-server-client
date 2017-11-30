@@ -1,4 +1,26 @@
-- deploy:
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/jdk8
+    steps:
+      - checkout
+      - restore_cache:
+          key: cache-{{ checksum "build.gradle" }}
+
+      - run: gradle dependencies
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: cache-{{ checksum "build.gradle" }}
+
+      - run: gradle build
+
+      - store_artifacts:
+                path: build/libs/*.jar
+
+  deploy:
     command: |
       if [ "${CIRCLE_BRANCH}" == "master" ]; then
         gradle publish
