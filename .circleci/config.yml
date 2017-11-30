@@ -21,7 +21,19 @@ jobs:
                 path: build/libs/*.jar
 
   deploy:
-    command: |
-      if [ "${CIRCLE_BRANCH}" == "master" ]; then
-        gradle publish
-      fi
+    docker:
+      - image: circleci/jdk8
+    steps:
+      - run: gradle publish
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
