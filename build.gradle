@@ -1,5 +1,5 @@
-group 'eu.cryptoeuro'
-version '0.0.11-SNAPSHOT'
+group 'ee.euro2'
+version '0.0.2-SNAPSHOT'
 
 buildscript {
     ext {
@@ -15,6 +15,7 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
 project.version = '0.0.2-SNAPSHOT'
@@ -29,14 +30,38 @@ repositories {
     maven { url "http://dl.bintray.com/ethereum/maven" }
 }
 
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier = 'javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            artifact sourcesJar
+            artifact javadocJar
         }
     }
     repositories {
-        mavenLocal()
+//        mavenLocal()
+        maven {
+            def repoUrl = project.version.endsWith('-SNAPSHOT') ? "https://oss.sonatype.org/content/repositories/snapshots" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            url repoUrl
+            credentials {
+                username "${System.env.OSSRH_USERNAME}"
+                password "${System.env.OSSRH_PASSWORD}"
+            }
+        }
     }
 }
 
