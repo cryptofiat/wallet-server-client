@@ -1,8 +1,12 @@
+defaults: &defaults
+  working_directory: /tmp
+  docker:
+    - image: circleci/java:8-jdk
+
 version: 2
 jobs:
   build:
-    docker:
-      - image: circleci/jdk8
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -18,12 +22,18 @@ jobs:
       - run: gradle build
 
       - store_artifacts:
-                path: build/libs/*.jar
+          path: build/libs/*.jar
+
+      - persist_to_workspace:
+         root: build
+         paths:
+           - libs
 
   deploy:
-    docker:
-      - image: circleci/jdk8
+    <<: *defaults
     steps:
+      - attach_workspace:
+          at: build
       - run: gradle publish
 
 workflows:
