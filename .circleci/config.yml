@@ -24,6 +24,9 @@ jobs:
   deploy:
     <<: *defaults
     steps:
+      - checkout
+      - restore_cache:
+          key: cache-{{ checksum "build.gradle" }}
       - run: gradle publish
 
 workflows:
