@@ -3,10 +3,9 @@ package eu.cryptoeuro.wallet.client.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.cryptoeuro.wallet.client.CreateTransferCommand;
-import eu.cryptoeuro.wallet.client.response.Account;
-import eu.cryptoeuro.wallet.client.response.Nonce;
-import eu.cryptoeuro.wallet.client.response.Transfer;
+import eu.cryptoeuro.wallet.client.response.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,12 +19,12 @@ import java.util.List;
 @Slf4j
 public class WalletServerService {
 
-    private String walletServer = "http://wallet.euro2.ee:8080"; // wallet-server node on AWS
+    @Value("#{systemProperties['wallet.server.url'] ?: 'http://wallet.euro2.ee:8080'}")
+    private String walletServer; // wallet-server node on AWS
 
     private final ObjectMapper mapper = new ObjectMapper();
 
     protected RestTemplate restTemplate = new RestTemplate();
-
 
     public Transfer transfer(CreateTransferCommand createTransferCommand) {
         HttpHeaders headers = new HttpHeaders();
@@ -41,7 +40,6 @@ public class WalletServerService {
                 "'signature': '572416e32187b7cf09eb02b82fa6afbed8357043fa0c899384a288fa7f8da5e216af491a5c54a3e55d616add2c91e69e62c287db1c9ec962be07bc7d0ff489c01c'"+
                 "}";
        */
-
         String json;
         try {
             json = mapper.writeValueAsString(createTransferCommand);
@@ -56,9 +54,7 @@ public class WalletServerService {
 
         Transfer transfer = restTemplate.postForObject(walletServer + "/v1/transfers", request, Transfer.class);
         log.info("Create transfer response: " + transfer.toString());
-
         return transfer;
-
     }
 
     public Nonce getNonce(String address) {
@@ -100,5 +96,6 @@ public class WalletServerService {
         log.info("... retrieved transfer list successfully");
         return transfers;
     }
+
 
 }
